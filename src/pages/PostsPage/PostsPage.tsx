@@ -4,6 +4,7 @@ import { fetchAllPosts, selectAllPosts, selectIsPending } from '../../redux/post
 import { useNavigate } from 'react-router-dom';
 import { formatDateToUTC } from '../../utils.ts';
 import { CreatePost, DeletePost, UpdatePost } from '../../components/buttons.tsx';
+import Loader from '../../components/loader.tsx';
 
 const PostsPage = () => {
   const navigate = useNavigate();
@@ -15,13 +16,13 @@ const PostsPage = () => {
 
   const posts = useAppSelector(selectAllPosts);
   const isPending = useAppSelector(selectIsPending);
-  if (isPending) return <div>loading...</div>; //Todo:make preloader
+  if (isPending) return <Loader />;
   return (
     <>
       <div className='mt-4 flex items-center justify-end gap-2 md:mt-8'>
         <CreatePost />
       </div>
-
+      {/*Mobile layout*/}
       <div className='mt-6 flow-root'>
         <div className='inline-block min-w-full align-middle'>
           <div className='rounded-lg bg-gray-50 p-2 md:pt-0'>
@@ -29,15 +30,15 @@ const PostsPage = () => {
               {posts?.map((post) => (
                 <div
                   onClick={(e) => {
-                    !e.defaultPrevented && navigate('/');
+                    !e.defaultPrevented && navigate(`/detailed-post/${post.id}`);
                   }}
                   key={post.id}
-                  className='mb-2 w-full rounded-md bg-white p-4'
+                  className='cursor-pointer mb-2 w-full rounded-md bg-white p-4'
                 >
                   <div className='flex items-center justify-between border-b pb-4'>
                     <div>
                       <div className='mb-2 flex items-center'>
-                        <img src={post.image} className='mr-2 w-full' width={300} height={300} alt='' />
+                        <img src={post.url} className='mr-2 w-full' width={300} height={300} alt='' />
                       </div>
                       <p>{post.title}</p>
                       <p>{post.text}</p>
@@ -57,6 +58,8 @@ const PostsPage = () => {
                 </div>
               ))}
             </div>
+
+            {/*Desktop layout*/}
             <table className='hidden min-w-full text-gray-900 md:table'>
               <thead className='rounded-lg text-left text-sm font-normal'>
                 <tr>
@@ -87,16 +90,17 @@ const PostsPage = () => {
                 {posts?.map((post) => (
                   <tr
                     onClick={(e) => {
-                      !e.defaultPrevented && navigate('/');
+                      !e.defaultPrevented && navigate(`/detailed-post/${post.id}`);
                     }}
                     key={post.id}
-                    className='w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg'
+                    className='cursor-pointer w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg'
                   >
                     <td className='whitespace-nowrap px-3 py-3'>{post.id}</td>
                     <td className='whitespace-nowrap py-3 pl-6 pr-3'>
                       <div className='flex items-center gap-3'>
+                        {/*Display image with url, because saved image doesn't display*/}
                         <img
-                          src={post.image}
+                          src={post.url}
                           className=''
                           width={150}
                           height={150}
