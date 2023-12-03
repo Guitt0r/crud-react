@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import Form from '../../components/form.tsx';
 import { useNavigate } from 'react-router-dom';
 
-type FormData = Pick<Post, 'title' | 'text' | 'image' | 'url'>;
+type FormData = Pick<Post, 'title' | 'text' | 'url'> & { image: FileList };
 
 const CreatePost = () => {
   const { register, handleSubmit, reset } = useForm<FormData>();
@@ -16,12 +16,13 @@ const CreatePost = () => {
   const [uploadImageUrl, setUploadImageUrl] = useState<string>();
 
   const onSubmit = handleSubmit((data) => {
+    //Save image file to image, and for url save url string with blob/file object
     dispatch(
       createPost({
         title: data.title,
         text: data.text,
-        image: uploadImageUrl,
-        url: uploadImageUrl,
+        image: data.image[0],
+        url: uploadImageUrl || '',
       })
     )
       .unwrap()

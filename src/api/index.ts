@@ -14,11 +14,12 @@ export const postAPI = {
     const res = await $host.get<Post>(`/${id}`);
     return res.data;
   },
-  async createPost(post: Partial<Post>) {
+  async createPost(post: FormData) {
     const res = await $host.post<Post>(``, post);
+    console.log(res);
     return res.data;
   },
-  async updatePost(post: Partial<Post>, id: number) {
+  async updatePost(post: FormData, id: number) {
     const res = await $host.put<Post>(`/${id}`, post);
     return res.data;
   },

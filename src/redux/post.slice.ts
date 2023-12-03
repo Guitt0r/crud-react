@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { postAPI } from '../api';
 import { Post } from '../types.ts';
 import { RootState } from './store.ts';
+import { convertPostToFormData } from '../utils.ts';
 
 export const fetchAllPosts = createAsyncThunk('posts/fetchAllPosts', async (_, { rejectWithValue }) => {
   try {
@@ -17,26 +18,37 @@ export const fetchPostById = createAsyncThunk('posts/fetchPostById', async (post
     return rejectWithValue(e);
   }
 });
-export const createPost = createAsyncThunk('posts/createPost', async (post: Partial<Post>, { rejectWithValue }) => {
-  try {
-    return postAPI.createPost(post);
-  } catch (e) {
-    return rejectWithValue(e);
+export const createPost = createAsyncThunk(
+  'posts/createPost',
+  async (
+    post: Pick<Post, 'title' | 'text' | 'url'> & {
+      image: File;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const formDataPost = convertPostToFormData(post);
+      return postAPI.createPost(formDataPost);
+    } catch (e) {
+      return rejectWithValue(e);
+    }
   }
-});
+);
 export const updatePost = createAsyncThunk(
   'posts/updatePost',
   async (
     {
       postId,
       ...post
-    }: Partial<Post> & {
+    }: Pick<Post, 'title' | 'text' | 'url'> & {
       postId: number;
+      image: File;
     },
     { rejectWithValue }
   ) => {
     try {
-      return postAPI.updatePost(post, postId);
+      const formDataPost = convertPostToFormData(post);
+      return postAPI.updatePost(formDataPost, postId);
     } catch (e) {
       return rejectWithValue(e);
     }

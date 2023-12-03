@@ -6,7 +6,7 @@ import { ChangeEvent } from 'react';
 import { UseFormRegister } from 'react-hook-form';
 import { Post } from '../types.ts';
 
-type FormData = Pick<Post, 'title' | 'text' | 'image' | 'url'>;
+type FormData = Pick<Post, 'title' | 'text' | 'url'> & { image: FileList };
 
 const Form = ({
   onSubmit,

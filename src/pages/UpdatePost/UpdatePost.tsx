@@ -7,7 +7,7 @@ import { Post } from '../../types.ts';
 import { toast } from 'react-toastify';
 import Form from '../../components/form.tsx';
 
-type FormData = Pick<Post, 'title' | 'text' | 'image' | 'url'>;
+type FormData = Pick<Post, 'title' | 'text' | 'url'> & { image: FileList };
 
 const UpdatePost = () => {
   const dispatch = useAppDispatch();
@@ -32,12 +32,13 @@ const UpdatePost = () => {
   const { register, handleSubmit, reset } = useForm<FormData>({});
 
   const onSubmit = handleSubmit((data) => {
+    //Save image file to image, and for url save url string with blob/file object
     dispatch(
       updatePost({
         title: data.title,
         text: data.text,
-        image: uploadImageUrl,
-        url: uploadImageUrl,
+        image: data.image[0],
+        url: uploadImageUrl || '',
         postId: +id!,
       })
     )
